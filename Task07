@@ -1,0 +1,145 @@
+/* 1 */
+
+
+
+CREATE TABLE employees (
+	employee_id SERIAL PRIMARY KEY,
+	first_name CHARACTER VARYING (20),
+	last_name CHARACTER VARYING (25) NOT NULL,
+	email CHARACTER VARYING (100) NOT NULL,
+	phone_number CHARACTER VARYING (20),
+	hire_date DATE NOT NULL,
+	job_id INTEGER NOT NULL,
+	salary NUMERIC (8, 2) NOT NULL,
+	manager_id INTEGER,
+	
+	department_id INTEGER,
+	FOREIGN KEY (pras_employee_id) REFERENCES project_assigment (pras_employee_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (pras_proj_id) REFERENCES project_assigment (pras_proj_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (proj_id) REFERENCES projects (proj_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE project_assigment (
+	
+	pras_proj_id INTEGER ,
+	pras_employee_id ,
+	
+	pras_startdate DATE ,
+	pras_enddate DATE ,
+	pras_status CHARACTER VARYING (15),
+	
+	CONSTRAINT PRIMARY KEY (pras_proj_id, pras_employee_id)
+
+);
+
+CREATE TABLE projects (
+	proj_id SERIAL PRIMARY KEY,
+	
+	proj_name CHARACTER VARYING (100),
+	proj_createdon DATE ,
+	proj_duedate DATE ,
+	proj_cust_name CHARACTER VARYING (100)
+
+);
+
+
+
+
+
+
+
+
+
+
+
+/* 2 */
+
+ALTER TABLE projects
+ADD proj_description CHARACTER VARYING (255);
+ADD proj_status CHARACTER VARYING (15);
+ADD proj_amount NUMBER;
+
+
+
+
+
+
+
+
+
+
+
+
+/* 3 */
+
+ALTER TABLE projects
+ADD CONSTRAINT proj_account_mgr INTEGER;
+ADD CONSTRAINT FOREIGN KEY (employee_id) REFERENCES employees (employee_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+
+
+
+
+
+
+
+
+
+/* 4 */
+
+/*Data for the table projects */
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (1,'E-COMMERCE',2021-09-14,2021-12-13,'TELKOMSEL','','INPROGRESS');
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (2,'TRAVELOKA',2021-09-14,2021-12-13,'XL','','INPROGRESS');
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (3,'TIKET.COM',2021-09-14,2021-12-13,'INDOSAT','','INPROGRESS');
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (4,'AGODA',2021-09-14,2021-12-13,'3','','INPROGRESS');
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (5,'OLX',2021-09-14,2021-12-13,'SMARTFREN','','INPROGRESS');
+INSERT INTO projects(proj_id, proj_name, proj_createdon, proj_duedate, proj_cust_name, proj_description, proj_status) VALUES (6,'BERNIAGA',2021-09-14,2021-12-13,'SMARTFREN','','INPROGRESS');
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 5 */
+
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (1, 104, 2021-09-14, 0, 'ASSIGNED');
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (1, 105, 2021-09-14, 2021-09-17, 'COMPLETED');
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (1, 106, 2021-09-14, 0, 'INPROGRESS');
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (2, 104, 2021-09-14, 0, 'ASSIGNED');
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (2, 105, 2021-09-14, 2021-09-17, 'COMPLETED');
+INSERT INTO project_assigment(pras_proj_id, pras_employee_id, pras_startdate, pras_enddate, pras_status) VALUES (2, 106, 2021-09-14, 2021-09-17, 'INPROGRESS');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 6 */
+
+SELECT * FROM employees inner join project_assigment
+on pras_status = 'COMPLETED' ;
