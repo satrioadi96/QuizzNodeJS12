@@ -1,0 +1,169 @@
+-- nomor 1
+
+select r.region_id, r.region_name,country_id,country_name from regions r
+join countries cu on cu.region_id = r.region_id
+order by r.region_id,country_id
+
+
+
+-- nomor 2
+
+select r.region_id, r.region_name, count(cu.region_id)total_countries from regions r
+join countries cu on cu.region_id = r.region_id
+group by r.region_id order by r.region_id
+
+
+
+
+
+-- nomor 3
+
+select cu.country_id, cu.country_name, location_id, street_address, postal_code, city, state_province   
+from locations l  
+join countries cu on l.country_id = cu.country_id
+join regions r on cu.region_id = r.region_id and r.region_name = 'Europe'
+group by cu.country_id, l.location_id order by cu.country_id
+
+
+
+
+
+-- nomor 4
+
+select department_id, department_name, l.location_id 
+from departments d
+join locations l on l.location_id = d.location_id
+join countries cu on cu.country_id = l.country_id
+join regions r on r.region_id = cu.region_id and r.region_name = 'Americas'
+group by d.department_id, l.location_id
+
+
+
+
+
+
+-- nomor 5
+
+select r.region_name, count(coalesce(d.department_id,0))total_department from  regions r
+join countries cu on cu.region_id = r.region_id
+join locations l on l.country_id = cu.country_id
+join departments d on d.location_id = l.location_id
+group by r.region_name
+
+
+
+
+
+-- nomor 6
+
+select cu.country_name, count(coalesce(d.department_id,0))total_department from countries cu
+join locations l on l.country_id = cu.country_id
+join departments d on d.location_id = l.location_id
+group by cu.country_name
+order by cu.country_name
+
+
+
+-- nomor 7
+
+select cu.country_name, count(coalesce(d.department_id,0))total_department from countries cu
+join locations l on l.country_id = cu.country_id
+join departments d on d.location_id = l.location_id
+group by cu.country_name
+order by cu.country_name desc limit 1
+
+
+
+
+-- nomor 8
+
+select d.department_id, department_name, count(coalesce(employee_id,0) )total_emps
+from departments d
+join employees e on d.department_id = e.department_id
+group by d.department_id
+order by total_emps asc
+
+
+
+-- nomor 9
+
+select d.department_id, department_name, count(coalesce(employee_id,0) )total_emps
+from departments d
+join employees e on d.department_id = e.department_id
+join locations l on l.location_id = d.location_id
+join countries cu on cu.country_id = l.country_id
+join regions r on r.region_id = cu.region_id and r.region_name = 'Americas'
+group by d.department_id
+order by total_emps
+
+
+
+
+-- nomor 10
+
+select employee_id, first_name, last_name, salary,
+	extract(year from age(now(),hire_date))masa_kerja, 
+	case when extract(year from age(now(),hire_date)) >= 25 then salary * 5
+		 else salary * 3 
+		 end bonus
+from employees e;
+
+
+select*from locations
+
+
+-- nomor 11
+
+
+select  masa_kerja, sum(bonus)bonus_per_masa_kerja from (
+select employee_id, first_name, last_name, salary,
+	extract(year from age(now(),hire_date))masa_kerja, 
+	case when extract(year from age(now(),hire_date)) >= 25 then salary * 5
+		 else salary * 3 
+		 end bonus
+from employees e
+)t
+group by masa_kerja
+order by masa_kerja
+
+
+
+
+-- nomor 12
+
+
+select sum( coalesce(masa_kerja_1,0))"15 <= masa kerja <= 25", 
+sum(coalesce(masa_kerja_2,0))"25 <= masa kerja <= 30" , 
+sum(coalesce(masa_kerja_3,0))"30 <= masa kerja <= 35"
+from (
+	select
+	extract(year from age(now(),e.hire_date))masa_kerja,
+	case when masa_kerja >= 15 and masa_kerja <= 25 then count(masa_kerja_1) end "15 <= masa kerja <= 25",
+	case when masa_kerja >= 25 and masa_kerja <= 30 then count(masa_kerja_2) end "25 <= masa kerja <= 30" ,
+	case when masa_kerja >= 30 and masa_kerja <= 35 then count(masa_kerja_3) end "30 <= masa kerja <= 35" 
+	from employees e
+)t
+
+
+
+
+-- nomor 13
+
+
+select department_id, department_name,
+sum(coalesce(masa_kerja_1,0))"15 <= masa kerja <= 25", 
+sum(coalesce(masa_kerja_2,0))"25 <= masa kerja <= 30" , 
+sum(coalesce(masa_kerja_3,0))"30 <= masa kerja <= 35"
+from (
+	select d.department_id, department_name,
+		case when extract(year from age(now(),e.hire_date)) >= 15 and extract(year from age(now(),e.hire_date)) <= 25 then count(employee_id) end masa_kerja_1,
+		case when extract(year from age(now(),e.hire_date)) >= 25 and extract(year from age(now(),e.hire_date)) <= 30 then count(employee_id) end masa_kerja_2 ,
+		case when extract(year from age(now(),e.hire_date)) >= 30 and extract(year from age(now(),e.hire_date)) <= 35 then count(employee_id) end masa_kerja_3 
+	from employees e join departments d on e.department_id = d.department_id
+	group by employee_id, d.department_id
+	order by d.department_id
+)t
+group by department_id, department_name
+order by department_name
+
+---
