@@ -1,0 +1,79 @@
+-- table:
+
+-- category .
+-- user .
+-- line_items .
+-- products .
+-- product_images .
+-- carts .
+-- orders
+
+
+CREATE TABLE category (
+    cate_id SERIAL PRIMARY KEY GENERATED,
+    cate_name CHARACTER VARYING (100) unique
+);
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY GENERATED,
+    user_name CHARACTER VARYING (25),
+	user_firstname CHARACTER VARYING(15),
+	user_lastname CHARACTER VARYING(15),
+	user_email CHARACTER VARYING(55),
+	user_password CHARACTER VARYING(10),
+	user_phone CHARACTER VARYING(15)
+);
+
+CREATE TABLE line_items(
+	lite_prod_id INTEGER PRIMARY KEY,
+	lite_cart_id INTEGER PRIMARY KEY,
+	lite_qty INTEGER ,
+	lite_price NUMERIC(18,2),
+	lite_total_price NUMERIC(18,2),
+	lite_status CHARACTER VARYING(15),
+	lite_order_name CHARACTER VARYING(25)
+);
+
+CREATE TABLE products(
+	prod_id SERIAL PRIMARY KEY GENERATED,
+	prod_name CHARACTER VARYING(100),
+	prod_price NUMERIC(18,2) ,
+	prod_desc CHARACTER VARYING(3000),
+	prod_url_image CHARACTER VARYING(255),
+	prod_rating INTEGER,
+	prod_view_count INTEGER,
+	prod_user_id INTEGER,
+	prod_cate_id INTEGER,
+	FOREIGN KEY (prod_user_id) REFERENCES users (user_id) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (prod_cate_id) REFERENCES category (cate_id) ON UPDATE CASCADE ON DELETE CASCADE
+
+);
+
+CREATE TABLE product_images(
+	prim_id SERIAL PRIMARY KEY GENERATED,
+	prim_filename CHARACTER VARYING(55),
+	prim_filesize INTEGER,
+	prim_filetype CHARACTER VARYING(25),
+	prim_url CHARACTER VARYING(255),
+	prim_primary BOOLEAN,
+	prim_prod_id INTEGER,
+	FOREIGN KEY (prim_prod_id) REFERENCES products (prod_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE carts (
+	cart_id SERIAL PRIMARY KEY GENERATED,
+	cart_createdon DATE,
+	cart_status CHARACTER VARYING(15),
+	cart_user_id INTEGER,
+	CONSTRAINT cart_user_id FOREIGN KEY (prod_user_id) 
+	REFERENCES products(prod_user_id) ON UPDATE CASCADE ON DELETE CASCADE
+	
+);
+
+
+
+
+
+
+
+select concat('ORD',to_char(now(),'YYYMMDD'),'#',lpad(''||nextval('seq_ord_number'),4,'0'));
